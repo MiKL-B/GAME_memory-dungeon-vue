@@ -46,7 +46,9 @@ Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre le
 - fix:interdire l'utilisation de l'épée tant que la paire n'est pas faite
 - fix:voir pourquoi les images ne se chargent pas plus vite
 - fix:ne pas autoriser plus d'une épée
+- fix:preload image
 - ajouter les sons
+- ajouter les crédits
 
 # CREDITS
 ## Font

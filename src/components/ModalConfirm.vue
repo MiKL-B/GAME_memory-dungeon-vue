@@ -9,7 +9,6 @@
       </div>
       <div class="modal-footer">
         <button @click="handleConfirm" class="btClose">Ok</button>
-
       </div>
     </div>
   </div>
@@ -20,7 +19,6 @@ export default {
   name: "ModalConfirm",
   props: ["isVisible"],
   methods: {
-
     handleConfirm() {
       this.$emit("confirm");
     },
@@ -41,7 +39,7 @@ export default {
 }
 .modal-content {
   background: var(--background);
-  border:4px solid var(--grey);
+  border: 4px solid var(--grey);
   width: 20rem;
   margin: auto;
 
@@ -49,20 +47,21 @@ export default {
   grid-template-rows: auto 1fr auto;
 }
 .modal-header {
-  padding:0.5rem;
+  padding: 0.5rem;
   display: flex;
   justify-content: space-between;
 }
-.modal-body{
-  padding:0.5rem;
+.modal-body {
+  padding: 0.5rem;
 }
+
 .modal-footer {
   display: flex;
   justify-content: center;
-  padding:0.5rem;
+  padding: 0.5rem;
 }
-.btClose{
-  width:100%;
-  padding:0.25rem 0.75rem;
+.btClose {
+  width: 100%;
+  padding: 0.25rem 0.75rem;
 }
 </style>

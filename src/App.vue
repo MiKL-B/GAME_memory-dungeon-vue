@@ -2,7 +2,11 @@
   <div class="background"></div>
   <div v-if="currentScreen === 'main'" id="mainScreen">
     <h1 id="gameTitle">Memory Dungeon</h1>
-    <button id="btStart" @click="startGame">CLICK TO START</button>
+    <button class="btMenuMainScreen" @click="startGame">Play</button>
+    <button class="btMenuMainScreen" @click="showScreen('option')">
+      Options
+    </button>
+    <button class="btMenuMainScreen" @click="displayCredits">Credits</button>
   </div>
   <div v-if="currentScreen === 'game'" id="gameScreen">
     <div id="player">
@@ -64,18 +68,35 @@
         </div>
       </div>
     </div>
-    <button v-if="soundStop === false" class="btSound" @click="stopSound">
-      <img src="/speaker.png" alt="" />
-    </button>
-    <button v-else class="btSound" @click="playSound">
-      <img src="/speaker-off.png" alt="" />
-    </button>
-  </div>
 
+    <button @click="toggleMuteSound" class="btSound">
+      <img v-if="mute === false" src="/speaker.png" alt="" />
+      <img v-else src="/speaker-off.png" alt="" />
+    </button>
+    <button @click="showScreen('main')" class="btQuit">Quit</button>
+  </div>
+  <div v-if="currentScreen === 'option'" id="optionScreen">
+    <label for="volumeControl">Volume:</label>
+    <input
+      id="volumeControl"
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      v-model="volume"
+      @input="updateVolume"
+    />
+    <button @click="toggleSound">
+      <img v-if="soundStop === false" src="/speaker.png" alt="" />
+      <img v-else src="/speaker-off.png" alt="" />
+    </button>
+
+    <button @click="showScreen('main')">Back</button>
+  </div>
   <!-- modal confirm -->
   <ModalConfirm :isVisible="isModalConfirmVisible" @confirm="handleConfirm">
     <template v-slot:content>
-      {{ messageConfirm }}
+      <p class="paragraphConfirm" v-html="formattedMessageConfirm"></p>
     </template>
   </ModalConfirm>
 </template>
@@ -91,7 +112,9 @@ export default {
   data() {
     return {
       sound: null,
-      soundStop: false,
+      soundStop: true,
+      mute: false,
+      volume: 0.5,
       currentScreen: "main",
       flippedCards: 0,
       cardsToCompare: [],
@@ -108,29 +131,84 @@ export default {
       cards: [],
     };
   },
+  mounted() {
+    const imagesToPreload = [
+      "/beer.png",
+      "/coins.png",
+      "/dungeon.png",
+      "/sword.png",
+      "/sword-grey.png",
+      "/heart-red.png",
+      "/heart-grey.png",
+      "/speaker.png",
+      "/speaker-off.png",
+      "/ladder.png",
+      "/monster.png",
+      "/potion.png",
+      "/shield.png",
+      "Dungeon-Exploration Music 1.ogg",
+    ];
 
+    this.preloadImages(imagesToPreload);
+    if (this.sound) {
+      this.sound.volume(this.volume);
+    }
+  },
   beforeDestroy() {
     if (this.sound) {
       this.sound.unload();
     }
   },
+  computed: {
+    formattedMessageConfirm() {
+      return this.messageConfirm.replace(/\r\n/g, "<br>");
+    },
+  },
+
   methods: {
+    preloadImages(images) {
+      images.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    },
+    toggleMuteSound() {
+      this.mute = !this.mute;
+      if (!this.sound) {
+        return;
+      }
+      if (this.mute) {
+        this.sound.mute(true);
+      } else {
+        this.sound.mute(false);
+      }
+    },
+    toggleSound() {
+      this.soundStop = !this.soundStop;
+      if (this.soundStop) {
+        this.stopSound();
+      } else {
+        this.playSound();
+      }
+    },
     playSound() {
-      this.soundStop = false;
       this.sound = new Howl({
         src: ["Dungeon-Exploration Music 1.ogg"],
-        volume: 0.5,
+        volume: this.volume,
         loop: true,
         html5: true,
         autoplay: true,
-
       });
       this.sound.play();
     },
     stopSound() {
       if (this.sound) {
         this.sound.stop();
-        this.soundStop = true;
+      }
+    },
+    updateVolume() {
+      if (this.sound) {
+        this.sound.volume(this.volume);
       }
     },
     showScreen(screen) {
@@ -157,14 +235,11 @@ export default {
       }
     },
     startGame() {
-      let msg = `Bienvenue dans Memory Dungeon.
-      Parcourez le donjon, trouvez des paires,  
-ramassez les épées afin  
-de vaincre les monstres sans difficultés,  
-sinon il vous en coûtera.  
+      let msg = "Bienvenue dans Memory Dungeon.\r\n\r\n";
+      msg +=
+        "Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre les monstres sans difficultés, sinon il vous en coûtera.\r\n\r\n";
+      msg += "Serez-vous assez courageux pour obtenir les 10 pièces d'or ?";
 
-Serez-vous assez courageux  
-pour obtenir les 10 pièces d'or ?`;
       this.showModalConfirm(msg).then((result) => {
         if (result) {
           this.resetBoard();
@@ -172,7 +247,6 @@ pour obtenir les 10 pièces d'or ?`;
           this.generateRandomBoard();
           this.shuffleArray(this.cards);
           this.showScreen("game");
-          this.playSound();
         }
       });
     },
@@ -389,6 +463,25 @@ pour obtenir les 10 pièces d'or ?`;
     getHeartImage(index) {
       return index <= this.filledHearts ? "/heart-red.png" : "/heart-grey.png";
     },
+    displayCredits() {
+      let msg = "Images:\r\n";
+      msg += "Source: https://game-icons.net/\r\n\r\n";
+      msg += "Music:\r\n";
+      msg +=
+        "Source: https://muhammadriza.itch.io/free-fantasy-rpg-music-pack\r\n\r\n";
+      msg +=
+        "Music by JP Soundworks (https://www.youtube.com/c/JPSoundworks/)\r\n\r\n";
+      msg +=
+        "Music by JP Soundworks, Pack Published by Platonic Game Studio.\r\n\r\n";
+      msg += "(C) 2019 - 2020 JP Soundoworks\r\n";
+      msg += "(P) 2019 - 2020 Platonic Game Studio\r\n";
+
+      this.showModalConfirm(msg).then((result) => {
+        if (result) {
+          return;
+        }
+      });
+    },
   },
 };
 </script>
@@ -401,6 +494,10 @@ pour obtenir les 10 pièces d'or ?`;
   text-align: center;
   align-items: center;
   gap: 1rem;
+}
+.btMenuMainScreen {
+  width: 150px;
+  padding: 0.25rem 0.75rem;
 }
 #gameTitle {
   font-size: 48px;
@@ -445,6 +542,9 @@ pour obtenir les 10 pièces d'or ?`;
   height: 100px;
   width: 100px;
   border: 2px solid var(--grey);
+}
+.paragraphConfirm {
+  font-size: 1rem;
 }
 @keyframes flip {
   from {
@@ -570,10 +670,30 @@ p {
   bottom: 0.5rem;
   width: 50px;
   height: 50px;
-  padding:0.5rem;
+  padding: 0.5rem;
 }
-
+.btQuit {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  width: 150px;
+}
 .btSound:hover {
   background: var(--background);
+}
+/* optionscreen */
+#optionScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 0.5rem;
+  gap: 1rem;
+}
+#optionScreen button {
+  width: 150px;
+  margin: auto;
+  padding: 0.25rem 0.75rem;
 }
 </style>
