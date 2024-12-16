@@ -33,8 +33,6 @@ but du jeu:
 Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre les monstres sans difficultés, sinon il vous en coutera. Serez-vous assez courageux pour obtenir les 10 pièces d'or?
 
 TODO
-
-fix:faire responsive
 ajouter les sons
 ajouter effet pour les différents objets
 next: ajouter boss et revoir condition de victoire
@@ -43,6 +41,7 @@ next: pièce sert à ajouter de nouvelles card dans le board
 FINISHED
 creer menu
 fix:UI
+fix:faire responsive
 fix:interdire l'utilisation de l'épée tant que la paire n'est pas faite
 fix:voir pourquoi les images ne se chargent pas plus vite
 fix:ne pas autoriser plus d'une épée

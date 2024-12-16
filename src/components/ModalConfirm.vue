@@ -8,7 +8,7 @@
         <slot name="content"></slot>
       </div>
       <div class="modal-footer">
-        <button @click="handleConfirm">ok</button>
+        <button @click="handleConfirm" class="btClose">Ok</button>
 
       </div>
     </div>
@@ -61,5 +61,8 @@ export default {
   justify-content: center;
   padding:0.5rem;
 }
-
+.btClose{
+  width:100%;
+  padding:0.25rem 0.75rem;
+}
 </style>

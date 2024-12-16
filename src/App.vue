@@ -1,4 +1,5 @@
 <template>
+  <div class="background"></div>
   <div v-if="currentScreen === 'main'" id="mainScreen">
     <h1 id="gameTitle">Memory Dungeon</h1>
     <button id="btStart" @click="startGame">CLICK TO START</button>
@@ -32,8 +33,13 @@
       id="btSlaySword"
       v-if="attack > 0 && flippedCards === 0"
       @click="slayMonster"
+      class="primary"
     >
       <img class="icon" src="/sword.png" />
+      <span>Use</span>
+    </button>
+    <button v-else id="btSlaySword" class="disabled">
+      <img class="icon" src="/sword-grey.png" />
       <span>Use</span>
     </button>
     <div id="notification">
@@ -47,10 +53,11 @@
         :class="{ flipped: card.flipped }"
       >
         <div v-if="card.flipped === false" class="face">
-          <img src="/dungeon.png" alt="" />
+          <img class="card-img" src="/dungeon.png" alt="" />
         </div>
         <div v-else class="back">
           <img
+            class="card-img"
             :src="'/' + card.name + '.png'"
             :style="`border:2px solid var(--${card.color})`"
           />
@@ -393,26 +400,22 @@ pour obtenir les 10 pièces d'or ?`;
   flex-direction: column;
   height: 100vh;
 }
-p {
-  margin: auto 0;
-  font-size: 2.5rem;
-  width: 50px;
-}
+
 #board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  height: 300px;
-  max-width: 300px;
+  grid-template-columns: repeat(3, 100px);
   gap: 0.5rem;
   margin: auto;
 }
 .card {
-  height: 100px;
-  width: 100px;
   background: var(--background);
   transform-style: preserve-3d;
 }
-
+.card-img {
+  height: 100px;
+  width: 100px;
+  border: 2px solid var(--grey);
+}
 @keyframes flip {
   from {
     -webkit-transform: rotateY(0deg);
@@ -429,13 +432,13 @@ p {
 }
 .face {
   background: var(--background);
-  height: 100%;
+  height: 100px;
   backface-visibility: hidden;
 }
 
 .back {
   background: var(--background);
-  height: 100%;
+  height: 100px;
   backface-visibility: hidden;
   transform: rotateY(180deg);
 }
@@ -453,8 +456,15 @@ p {
   background: var(--background);
   border: 2px solid var(--grey);
   display: flex;
-  align-items: center;
+  justify-content: space-around;
   gap: 0.1rem;
+  margin: 0.5rem;
+}
+.field {
+  gap: 0 0.2rem;
+}
+p {
+  font-size: 28px;
 }
 #btSlaySword {
   display: flex;
@@ -462,6 +472,7 @@ p {
   align-items: center;
   position: absolute;
   top: 3.5rem;
+  left:0.5rem;
 }
 #notification {
   display: flex;
@@ -482,18 +493,22 @@ p {
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
+    margin:0;
   }
   #board {
-    height: 600px;
-    max-width: 600px;
+    grid-template-columns: repeat(3, 200px);
   }
-  .card {
+  .card-img {
     height: 200px;
     width: 200px;
   }
   .icon {
     width: 50px;
     height: 50px;
+  }
+  .face,
+  .back {
+    height: 200px;
   }
   #notification {
     position: absolute;
@@ -505,7 +520,18 @@ p {
   }
   #btSlaySword {
     top: 0.5rem;
-    left:13.5rem;
+    left: 13.5rem;
   }
+}
+
+.background {
+  position: absolute;
+  top: -30%;
+  height: 200%;
+  width: 150%;
+  opacity: 0.1;
+  z-index: -1;
+  background: url("/dungeon.png");
+  background-repeat: repeat;
 }
 </style>
