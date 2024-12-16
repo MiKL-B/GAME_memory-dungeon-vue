@@ -33,19 +33,6 @@
       </div>
     </div>
 
-    <button
-      id="btSlaySword"
-      v-if="attack > 0 && flippedCards === 0"
-      @click="slayMonster"
-      class="primary"
-    >
-      <img class="icon" src="/sword.png" />
-      <span>Use</span>
-    </button>
-    <button v-else id="btSlaySword" class="disabled">
-      <img class="icon" src="/sword-grey.png" />
-      <span>Use</span>
-    </button>
     <div id="notification">
       {{ message }}
     </div>
@@ -68,15 +55,38 @@
         </div>
       </div>
     </div>
-
-    <button @click="toggleMuteSound" class="btSound">
-      <img v-if="mute === false" src="/speaker.png" alt="" />
-      <img v-else src="/speaker-off.png" alt="" />
-    </button>
-    <button @click="showScreen('main')" class="btQuit">Quit</button>
+    <div class="bottomContainer">
+      <button
+        id="btSlaySword"
+        v-if="attack > 0 && flippedCards === 0"
+        @click="slayMonster"
+        class="primary"
+      >
+        <img class="icon" src="/sword.png" />
+      </button>
+      <button v-else id="btSlaySword" class="disabled">
+        <img class="icon" src="/sword-grey.png" />
+      </button>
+      <!-- <button class="disabled">
+        <img src="/cart.png" alt="" />
+      </button>
+      <button class="disabled">
+        <img src="/trophy.png" alt="" />
+      </button>
+      <button class="disabled">
+        <img src="/cog.png" alt="" />
+      </button> -->
+      <button @click="toggleMuteSound">
+        <img v-if="mute === false" src="/speaker.png" alt="" />
+        <img v-else src="/speaker-off.png" alt="" />
+      </button>
+      <button @click="showScreen('main')">
+        <img src="/exit.png" alt="" />
+      </button>
+    </div>
   </div>
   <div v-if="currentScreen === 'option'" id="optionScreen">
-    <label for="volumeControl">Volume:</label>
+    <label for="volumeControl">Volume</label>
     <input
       id="volumeControl"
       type="range"
@@ -583,8 +593,6 @@ export default {
   align-items: center;
 }
 #player {
-  background: var(--background);
-  border: 2px solid var(--grey);
   display: flex;
   justify-content: space-around;
   gap: 0.1rem;
@@ -596,14 +604,7 @@ export default {
 p {
   font-size: 28px;
 }
-#btSlaySword {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  position: absolute;
-  top: 3.5rem;
-  left: 0.5rem;
-}
+
 #notification {
   display: flex;
   justify-content: center;
@@ -648,10 +649,6 @@ p {
     justify-content: center;
     font-size: 48px;
   }
-  #btSlaySword {
-    top: 0.5rem;
-    left: 13.5rem;
-  }
 }
 
 .background {
@@ -664,36 +661,33 @@ p {
   background: url("/dungeon.png");
   background-repeat: repeat;
 }
-.btSound {
+.bottomContainer {
   position: absolute;
+  left: 0.5rem;
   right: 0.5rem;
   bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.bottomContainer button{
   width: 50px;
   height: 50px;
   padding: 0.5rem;
 }
-.btQuit {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  width: 150px;
-}
-.btSound:hover {
-  background: var(--background);
-}
+
 /* optionscreen */
 #optionScreen {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height:100vh;
   padding: 0.5rem;
   gap: 1rem;
 }
 #optionScreen button {
   width: 150px;
-  margin: auto;
   padding: 0.25rem 0.75rem;
 }
 </style>
