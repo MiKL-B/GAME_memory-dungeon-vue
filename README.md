@@ -28,20 +28,40 @@ npm run dev
 npm run build
 ```
 
-
-but du jeu:
+# PURPOSE
 Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre les monstres sans difficultés, sinon il vous en coutera. Serez-vous assez courageux pour obtenir les 10 pièces d'or?
 
-TODO
-ajouter les sons
-ajouter effet pour les différents objets
-next: ajouter boss et revoir condition de victoire
-next: pièce sert à ajouter de nouvelles card dans le board
+# TASKS
+## Todo
+- ajouter effet pour les différents objets
+- next: ajouter boss et revoir condition de victoire
+- next: pièce sert à ajouter de nouvelles card dans le board
+- next: système de succés
+- ranger assets
 
-FINISHED
-creer menu
-fix:UI
-fix:faire responsive
-fix:interdire l'utilisation de l'épée tant que la paire n'est pas faite
-fix:voir pourquoi les images ne se chargent pas plus vite
-fix:ne pas autoriser plus d'une épée
+## Finished
+- creer menu
+- fix:UI
+- fix:faire responsive
+- fix:interdire l'utilisation de l'épée tant que la paire n'est pas faite
+- fix:voir pourquoi les images ne se chargent pas plus vite
+- fix:ne pas autoriser plus d'une épée
+- ajouter les sons
+
+# CREDITS
+## Font
+Font: Ubuntu
+
+Source: https://fonts.google.com/?query=ubuntu
+## Images
+Source: https://game-icons.net/
+## Music
+Source: https://muhammadriza.itch.io/free-fantasy-rpg-music-pack
+
+"Music by JP Soundworks (https://www.youtube.com/c/JPSoundworks/)"
+
+Music by JP Soundworks, Pack Published by Platonic Game Studio.
+
+(C) 2019 - 2020 JP Soundoworks
+
+(P) 2019 - 2020 Platonic Game Studio

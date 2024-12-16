@@ -64,6 +64,12 @@
         </div>
       </div>
     </div>
+    <button v-if="soundStop === false" class="btSound" @click="stopSound">
+      <img src="/speaker.png" alt="" />
+    </button>
+    <button v-else class="btSound" @click="playSound">
+      <img src="/speaker-off.png" alt="" />
+    </button>
   </div>
 
   <!-- modal confirm -->
@@ -76,7 +82,7 @@
 
 <script>
 import ModalConfirm from "./components/ModalConfirm.vue";
-
+import { Howl } from "howler";
 export default {
   name: "App",
   components: {
@@ -84,6 +90,8 @@ export default {
   },
   data() {
     return {
+      sound: null,
+      soundStop: false,
       currentScreen: "main",
       flippedCards: 0,
       cardsToCompare: [],
@@ -100,10 +108,31 @@ export default {
       cards: [],
     };
   },
-  mounted() {
-    // this.startGame();
+
+  beforeDestroy() {
+    if (this.sound) {
+      this.sound.unload();
+    }
   },
   methods: {
+    playSound() {
+      this.soundStop = false;
+      this.sound = new Howl({
+        src: ["Dungeon-Exploration Music 1.ogg"],
+        volume: 0.5,
+        loop: true,
+        html5: true,
+        autoplay: true,
+
+      });
+      this.sound.play();
+    },
+    stopSound() {
+      if (this.sound) {
+        this.sound.stop();
+        this.soundStop = true;
+      }
+    },
     showScreen(screen) {
       this.currentScreen = screen;
     },
@@ -143,6 +172,7 @@ pour obtenir les 10 pièces d'or ?`;
           this.generateRandomBoard();
           this.shuffleArray(this.cards);
           this.showScreen("game");
+          this.playSound();
         }
       });
     },
@@ -472,7 +502,7 @@ p {
   align-items: center;
   position: absolute;
   top: 3.5rem;
-  left:0.5rem;
+  left: 0.5rem;
 }
 #notification {
   display: flex;
@@ -493,7 +523,7 @@ p {
     flex-direction: column;
     gap: 0.5rem;
     padding: 0.5rem;
-    margin:0;
+    margin: 0;
   }
   #board {
     grid-template-columns: repeat(3, 200px);
@@ -533,5 +563,17 @@ p {
   z-index: -1;
   background: url("/dungeon.png");
   background-repeat: repeat;
+}
+.btSound {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: 50px;
+  height: 50px;
+  padding:0.5rem;
+}
+
+.btSound:hover {
+  background: var(--background);
 }
 </style>
