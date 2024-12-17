@@ -22,10 +22,10 @@
         <img class="icon" src="/dungeon.png" />
         <p>{{ currentRoom }}</p>
       </div>
-      <div class="field">
+      <!-- <div class="field">
         <img class="icon" src="/sword.png" />
         <p>{{ attack }}</p>
-      </div>
+      </div> -->
 
       <div class="field">
         <img class="icon" src="/coins.png" />
@@ -52,6 +52,9 @@
             :src="'/' + card.name + '.png'"
             :style="`border:2px solid var(--${card.color})`"
           />
+          <!-- <span class="card-attack" v-if="card.attack">
+            {{ card.attack }}
+          </span> -->
         </div>
       </div>
     </div>
@@ -62,10 +65,10 @@
         @click="slayMonster"
         class="primary"
       >
-        <img class="icon" src="/sword.png" />
+        <img src="/sword.png" />
       </button>
       <button v-else id="btSlaySword" class="disabled">
-        <img class="icon" src="/sword-grey.png" />
+        <img src="/sword-grey.png" />
       </button>
       <!-- <button class="disabled">
         <img src="/cart.png" alt="" />
@@ -76,17 +79,14 @@
       <button class="disabled">
         <img src="/cog.png" alt="" />
       </button> -->
-      <button @click="toggleMuteSound">
-        <img v-if="mute === false" src="/speaker.png" alt="" />
-        <img v-else src="/speaker-off.png" alt="" />
-      </button>
+
       <button @click="showScreen('main')">
         <img src="/exit.png" alt="" />
       </button>
     </div>
   </div>
   <div v-if="currentScreen === 'option'" id="optionScreen">
-    <label for="volumeControl">Volume</label>
+    <label for="volumeControl">Music</label>
     <input
       id="volumeControl"
       type="range"
@@ -100,7 +100,20 @@
       <img v-if="soundStop === false" src="/speaker.png" alt="" />
       <img v-else src="/speaker-off.png" alt="" />
     </button>
-
+    <label for="volumeControlSFX">SFX</label>
+    <input
+      id="volumeControlSFX"
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      v-model="volumeSFX"
+      @input="updateVolumeSFX"
+    />
+    <button @click="toggleSoundSFX">
+      <img v-if="soundStopSFX === false" src="/speaker.png" alt="" />
+      <img v-else src="/speaker-off.png" alt="" />
+    </button>
     <button @click="showScreen('main')">Back</button>
   </div>
   <!-- modal confirm -->
@@ -123,8 +136,10 @@ export default {
     return {
       sound: null,
       soundStop: true,
-      mute: false,
       volume: 0.5,
+      volumeSFX: 0.5,
+      soundStopSFX: true,
+      soundFlipCard: null,
       currentScreen: "main",
       flippedCards: 0,
       cardsToCompare: [],
@@ -163,6 +178,9 @@ export default {
     if (this.sound) {
       this.sound.volume(this.volume);
     }
+    if (this.soundSFX) {
+      this.soundSFX.volume(this.volumeSFX);
+    }
   },
   beforeDestroy() {
     if (this.sound) {
@@ -182,17 +200,7 @@ export default {
         img.src = src;
       });
     },
-    toggleMuteSound() {
-      this.mute = !this.mute;
-      if (!this.sound) {
-        return;
-      }
-      if (this.mute) {
-        this.sound.mute(true);
-      } else {
-        this.sound.mute(false);
-      }
-    },
+
     toggleSound() {
       this.soundStop = !this.soundStop;
       if (this.soundStop) {
@@ -220,6 +228,30 @@ export default {
       if (this.sound) {
         this.sound.volume(this.volume);
       }
+    },
+
+    playSoundFlipCard() {
+      this.soundFlipCard = new Howl({
+        src: ["flipcard-91468.mp3"],
+        volume: this.volumeSFX,
+        loop: false,
+        html5: true,
+        autoplay: false,
+      });
+      this.soundFlipCard.play();
+    },
+    stopSoundFlipCard() {
+      if (this.soundFlipCard) {
+        this.soundFlipCard.stop();
+      }
+    },
+    updateVolumeSFX() {
+      if (this.soundSFX) {
+        this.soundSFX.volume(this.volumeSFX);
+      }
+    },
+    toggleSoundSFX() {
+      this.soundStopSFX = !this.soundStopSFX;
     },
     showScreen(screen) {
       this.currentScreen = screen;
@@ -273,6 +305,7 @@ export default {
         {
           name: "monster",
           color: "violet",
+          // attack: 1,
         },
         {
           name: "coins",
@@ -290,8 +323,20 @@ export default {
           name: "beer",
           color: "yellow",
         },
+        {
+          name: "joker",
+          color: "green",
+        },
       ];
-      let names = ["potion", "monster", "coins", "sword", "shield", "beer"];
+      let names = [
+        "potion",
+        "monster",
+        "coins",
+        "sword",
+        "shield",
+        "beer",
+        "joker",
+      ];
       let selectedCards = [];
 
       while (selectedCards.length < 4) {
@@ -302,11 +347,14 @@ export default {
           flipped: false,
           img: names[index],
           color: items[index].color,
+          // attack: items[index].attack ,
         };
 
         if (!this.cardExists(randomCard, selectedCards)) {
           selectedCards.push(randomCard);
         }
+        //  selectedCards.push(randomCard);
+        // console.log(selectedCards)
       }
       for (let card of selectedCards) {
         let cardCopy = { ...card };
@@ -373,7 +421,9 @@ export default {
         }, 2000);
         return;
       }
-
+      if (this.soundStopSFX === false) {
+        this.playSoundFlipCard();
+      }
       this.cardsToCompare.push(card);
       this.compareCard();
 
@@ -476,6 +526,9 @@ export default {
     displayCredits() {
       let msg = "Images:\r\n";
       msg += "Source: https://game-icons.net/\r\n\r\n";
+      msg += "SFX:\r\n";
+      msg +=
+        "Source: https://pixabay.com/sound-effects/search/card-flip/\r\n\r\n";
       msg += "Music:\r\n";
       msg +=
         "Source: https://muhammadriza.itch.io/free-fantasy-rpg-music-pack\r\n\r\n";
@@ -582,6 +635,13 @@ export default {
   backface-visibility: hidden;
   transform: rotateY(180deg);
 }
+/* .card-attack {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  font-size: 24px;
+  filter: drop-shadow(1px 1px 2px black);
+} */
 
 .icon {
   width: 34px;
@@ -641,6 +701,7 @@ p {
   .back {
     height: 200px;
   }
+
   #notification {
     position: absolute;
     top: 0.5rem;
@@ -670,7 +731,7 @@ p {
   justify-content: center;
   gap: 0.5rem;
 }
-.bottomContainer button{
+.bottomContainer button {
   width: 50px;
   height: 50px;
   padding: 0.5rem;
@@ -682,7 +743,7 @@ p {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height:100vh;
+  height: 100vh;
   padding: 0.5rem;
   gap: 1rem;
 }
