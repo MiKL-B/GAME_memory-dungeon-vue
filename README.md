@@ -38,7 +38,11 @@ Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre le
 - next: pièce sert à ajouter de nouvelles card dans le board
 - next: système de succés
 - ranger assets
-
+- ajouter titlescreen
+- mainscreen menu : skills, cards , achievements
+- currency: brain for memory skills, rune for dungeon skills, gold for cards
+- in game: a la fin de chaque tableau proposer un choix à 3 options
+bonus / malus / or / rune / memory / potion (mettre 3 aléatoirement unique)
 ## Finished
 - creer menu
 - fix:UI

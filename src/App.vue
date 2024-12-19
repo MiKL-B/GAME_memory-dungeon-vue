@@ -1,35 +1,103 @@
 <template>
   <div class="background"></div>
-  <div v-if="currentScreen === 'main'" id="mainScreen">
+  <div v-if="currentScreen === 'title'" id="titleScreen">
     <h1 id="gameTitle">Memory Dungeon</h1>
-    <button class="btMenuMainScreen" @click="startGame">Play</button>
-    <button class="btMenuMainScreen" @click="showScreen('option')">
-      Options
-    </button>
-    <button class="btMenuMainScreen" @click="displayCredits">Credits</button>
+    <button class="btScreen" @click="startMainScreen">Play</button>
+    <button class="btScreen" @click="showScreen('option')">Options</button>
+    <button class="btScreen" @click="displayCredits">Credits</button>
+  </div>
+  <div v-if="currentScreen === 'main'" id="mainScreen">
+    <h1>Lobby</h1>
+    <button class="btScreen" @click="startGame">Launch</button>
+    <button class="btScreen" @click="showScreen('title')">Quit</button>
+    <!-- <button class="btScreen" @click="showScreen('skills')">Skills</button>
+    <button class="btScreen" @click="showScreen('cards')">Cards</button>
+    <button class="btScreen" @click="showScreen('achievements')">
+      Achievements
+    </button> -->
+    <span>Coming soon...</span>
+    <button class="btScreen disabled">Skills</button>
+    <button class="btScreen disabled">Cards</button>
+    <button class="btScreen disabled">Achievements</button>
+  </div>
+  <div v-if="currentScreen === 'skills'" id="skillsScreen">
+    <h1 class="center">Skills</h1>
+    <div class="skills">
+      <h2>Memory</h2>
+      <div v-for="i in 10" class="skill">
+        <span>Skill name</span>
+        <div class="skillAction">
+          <button>+</button>
+          <span>75</span>
+          <img class="imgMenu" src="/brain.png" alt="" />
+        </div>
+      </div>
+      <h2>Rune</h2>
+      <div v-for="i in 10" class="skill">
+        <span>Skill name</span>
+        <div class="skillAction">
+          <button>+</button>
+          <span>75</span>
+          <img class="imgMenu" src="/rune-stone.png" alt="" />
+        </div>
+      </div>
+    </div>
+    <button @click="showScreen('main')" class="center btScreen">Back</button>
+  </div>
+  <div v-if="currentScreen === 'cards'" id="cardsScreen">
+    <h1 class="center">Cards</h1>
+    <div class="cards">
+      <div v-for="i in 10" class="cardToBuy">
+        <span>Cards name</span>
+        <div class="cardAction">
+          <button>Buy</button>
+          <span>75</span>
+          <img class="imgMenu" src="/coins.png" alt="" />
+        </div>
+      </div>
+    </div>
+    <button @click="showScreen('main')" class="center btScreen">Back</button>
+  </div>
+  <div v-if="currentScreen === 'achievements'" id="achievementScreen">
+    <h1 class="center">Achievements</h1>
+    <div class="achievements">
+      <div v-for="i in 10" class="achievement">
+        <img class="imgMenu" src="/help.png" />
+        <span>Achievement name</span>
+      </div>
+    </div>
+    <button @click="showScreen('main')" class="center btScreen">Back</button>
   </div>
   <div v-if="currentScreen === 'game'" id="gameScreen">
     <div id="player">
       <div class="field">
-        <img
+        <!-- <img
           class="icon"
           v-for="index in hearts"
           :key="index"
           :src="getHeartImage(index)"
-        />
+        /> -->
+        <div class="field">
+          <img class="icon" src="/heart-red.png" />
+          <p>{{ hearts }}</p>
+        </div>
       </div>
       <div class="field">
         <img class="icon" src="/dungeon.png" />
         <p>{{ currentRoom }}</p>
       </div>
-      <!-- <div class="field">
-        <img class="icon" src="/sword.png" />
-        <p>{{ attack }}</p>
-      </div> -->
 
       <div class="field">
         <img class="icon" src="/coins.png" />
         <p>{{ gold }}</p>
+      </div>
+      <div class="field">
+        <img class="icon" src="/brain.png" />
+        <p>0</p>
+      </div>
+      <div class="field">
+        <img class="icon" src="/rune-stone.png" />
+        <p>0</p>
       </div>
     </div>
 
@@ -41,10 +109,10 @@
         class="card"
         v-for="card in cards"
         @click="flip(card)"
-        :class="{ flipped: card.flipped }"
+        :class="card.flipped ? 'flipped' : 'unflipped'"
       >
         <div v-if="card.flipped === false" class="face">
-          <img class="card-img" src="/dungeon.png" alt="" />
+          <img class="card-img" src="/dungeon.png" />
         </div>
         <div v-else class="back">
           <img
@@ -79,10 +147,6 @@
       <button class="disabled">
         <img src="/cog.png" alt="" />
       </button> -->
-
-      <button @click="showScreen('main')">
-        <img src="/exit.png" alt="" />
-      </button>
     </div>
   </div>
   <div v-if="currentScreen === 'option'" id="optionScreen">
@@ -114,7 +178,7 @@
       <img v-if="soundStopSFX === false" src="/speaker.png" alt="" />
       <img v-else src="/speaker-off.png" alt="" />
     </button>
-    <button @click="showScreen('main')">Back</button>
+    <button @click="showScreen('title')">Back</button>
   </div>
   <!-- modal confirm -->
   <ModalConfirm :isVisible="isModalConfirmVisible" @confirm="handleConfirm">
@@ -140,12 +204,11 @@ export default {
       volumeSFX: 0.5,
       soundStopSFX: true,
       soundFlipCard: null,
-      currentScreen: "main",
+      currentScreen: "title",
       flippedCards: 0,
       cardsToCompare: [],
       gold: 0,
       hearts: 3,
-      filledHearts: 3,
       attack: 0,
       currentRoom: 1,
       message: "",
@@ -276,7 +339,7 @@ export default {
         [array[i], array[j]] = [array[j], array[i]];
       }
     },
-    startGame() {
+    startMainScreen() {
       let msg = "Bienvenue dans Memory Dungeon.\r\n\r\n";
       msg +=
         "Parcourez le donjon, trouvez des paires, ramassez les épées afin de vaincre les monstres sans difficultés, sinon il vous en coûtera.\r\n\r\n";
@@ -284,13 +347,16 @@ export default {
 
       this.showModalConfirm(msg).then((result) => {
         if (result) {
-          this.resetBoard();
-          this.resetPlayer();
-          this.generateRandomBoard();
-          this.shuffleArray(this.cards);
-          this.showScreen("game");
+          this.showScreen("main");
         }
       });
+    },
+    startGame() {
+      this.resetBoard();
+      this.resetPlayer();
+      this.generateRandomBoard();
+      this.shuffleArray(this.cards);
+      this.showScreen("game");
     },
     cardExists(card, array) {
       return array.some((existingCard) => existingCard.name === card.name);
@@ -457,6 +523,9 @@ export default {
         setTimeout(() => {
           card1.flipped = false;
           card2.flipped = false;
+          if (this.soundStopSFX === false) {
+            this.playSoundFlipCard();
+          }
           this.cardsToCompare = [];
           this.flippedCards = 0;
         }, 1000);
@@ -496,6 +565,12 @@ export default {
           this.cards[i].flipped = true;
         }
       }
+
+      // document.body.classList.add("shake");
+      // setTimeout(() => {
+      //   document.body.classList.remove("shake");
+      // }, 1000);
+
       this.attack = 0;
     },
     showMessage(text) {
@@ -506,23 +581,20 @@ export default {
     },
 
     increaseHearts() {
-      this.filledHearts++;
-      if (this.filledHearts >= 3) {
-        this.filledHearts = 3;
+      this.hearts++;
+      if (this.hearts >= 3) {
+        this.hearts = 3;
       }
       this.showMessage(`You have earned a health point!`);
     },
     decreaseHearts() {
-      this.filledHearts--;
-      if (this.filledHearts === 0) {
-        this.filledHearts = 0;
+      this.hearts--;
+      if (this.hearts === 0) {
+        this.hearts = 0;
       }
       this.showMessage("You have lost a health point!");
     },
 
-    getHeartImage(index) {
-      return index <= this.filledHearts ? "/heart-red.png" : "/heart-grey.png";
-    },
     displayCredits() {
       let msg = "Images:\r\n";
       msg += "Source: https://game-icons.net/\r\n\r\n";
@@ -549,6 +621,7 @@ export default {
 };
 </script>
 <style>
+#titleScreen,
 #mainScreen {
   height: 100vh;
   display: flex;
@@ -557,38 +630,76 @@ export default {
   text-align: center;
   align-items: center;
   gap: 1rem;
+  animation: smooth 0.5s ease-in-out;
 }
-.btMenuMainScreen {
-  width: 150px;
-  padding: 0.25rem 0.75rem;
+
+.achievement {
+  gap: 0.5rem;
+  display: flex;
+  padding: 0 0.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
-#gameTitle {
-  font-size: 48px;
+.imgMenu {
+  width: 50px;
+  height: 50px;
 }
-#btStart {
-  border: none;
-  background: none;
-  color: var(--white);
-  padding: 0;
-  font-size: 24px;
-  animation: blink 2s ease-in-out infinite;
+.center {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
 }
-@keyframes blink {
+#skillsScreen,
+#cardsScreen,
+#achievementScreen {
+  animation: smooth 0.5s ease-in-out;
+}
+.skills,
+.cards,
+.achievements {
+  overflow: scroll !important;
+  height: calc(100vh - 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 300px;
+  margin: auto;
+}
+.skill,
+.cardToBuy {
+  display: flex;
+  padding: 0 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+.skillAction,
+.cardAction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+@keyframes smooth {
   0% {
-    opacity: 1;
-  }
-  50% {
     opacity: 0;
   }
   100% {
     opacity: 1;
   }
 }
+.btScreen {
+  width: 150px;
+  padding: 0.25rem 0.75rem;
+}
+#gameTitle {
+  font-size: 48px;
+}
+
 #gameScreen {
   display: flex;
   justify-content: center;
   flex-direction: column;
   height: 100vh;
+  animation: smooth 0.5s ease-in-out;
 }
 
 #board {
@@ -609,6 +720,20 @@ export default {
 .paragraphConfirm {
   font-size: 1rem;
 }
+.unflipped {
+  animation: unflip 0.5s;
+  transform: rotateY(0deg);
+}
+@keyframes unflip {
+  from {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+  }
+  to {
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+  }
+}
 @keyframes flip {
   from {
     -webkit-transform: rotateY(0deg);
@@ -627,6 +752,7 @@ export default {
   background: var(--background);
   height: 100px;
   backface-visibility: hidden;
+  transform: rotateY(0deg);
 }
 
 .back {
@@ -674,6 +800,40 @@ p {
   top: 6rem;
   width: 100%;
 }
+/* .shake {
+  animation: shake 0.2s;
+}
+@keyframes shake {
+  0% {
+    transform: translate(6px, 0);
+  }
+  25% {
+    transform: translate(-6px, 0);
+  }
+  50% {
+    transform: translate(6px, 0);
+  }
+  75% {
+    transform: translate(-6px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+} */
+/* .validation {
+  animation: validation 0.5s forwards;
+}
+@keyframes validation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+} */
 @media screen and (min-width: 1024px) {
   #player {
     position: absolute;
@@ -685,6 +845,11 @@ p {
     gap: 0.5rem;
     padding: 0.5rem;
     margin: 0;
+  }
+  .skills,
+  .cards {
+    max-width: 600px;
+    margin: auto;
   }
   #board {
     grid-template-columns: repeat(3, 200px);
