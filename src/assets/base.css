@@ -46,21 +46,6 @@ button:hover {
   color: var(--blue);
 }
 
-button.primary:hover {
-  color: var(--blue);
-  border-color: var(--blue);
-  background: var(--background);
-}
-button.disabled {
-  cursor: not-allowed;
-  color: var(--grey);
-  border-color: var(--grey);
-}
-button.disabled:hover {
-  background: var(--background);
-  color: var(--grey);
-  border-color: var(--grey);
-}
 img {
   width: 100%;
   height: 100%;
