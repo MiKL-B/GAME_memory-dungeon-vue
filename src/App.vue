@@ -137,7 +137,7 @@ export default {
       this.flippedBackCards(true);
       setTimeout(() => {
         this.flippedBackCards(false);
-      }, 2000);
+      }, 3000);
     },
     cardExists(card, array) {
       return array.some((existingCard) => existingCard.name === card.name);
@@ -218,6 +218,7 @@ export default {
       this.cardsToCompare = [];
       this.flippedCards = 0;
       this.flippedBackCards(true);
+      this.count = 0;
     },
     resetPlayer() {
       this.attack = 0;
